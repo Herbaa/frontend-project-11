@@ -3,7 +3,7 @@ export default {
     url: () => ({ key: 'notURL' }),
   },
   mixed: {
-    required: () => ({ key: 'empty' }),
-    notOneOf: () => ({ key: 'exists' }),
+    required: () => ({ key: 'notEmpty' }),
+    notOneOf: () => ({ key: 'notOneOf' }),
   },
 };
