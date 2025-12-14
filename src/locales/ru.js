@@ -1,6 +1,11 @@
 export default {
   translation: {
-    success: 'RSS успешно загружен',
+    feeds: 'Фиды',
+    posts: 'Посты',
+    view: 'Просмотр',
+    load: {
+      success: 'RSS успешно загружен',
+    },
     errors: {
       notOneOf: 'RSS уже существует',
       notEmpty: 'Не должно быть пустым',
