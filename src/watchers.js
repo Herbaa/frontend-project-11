@@ -51,10 +51,10 @@ export default (initialState, elements, i18next) => {
       <div class='card-body'></div>
     `;
 
-    const postsTitle = document.createElement('h2')
-    postsTitle.classList.add('card-title', 'h4')
-    postsTitle.textContent = i18next.t('posts')
-    fragmentStructure.querySelector('.card-body').appendChild(postsTitle)
+    const postsTitle = document.createElement('h2');
+    postsTitle.classList.add('card-title', 'h4');
+    postsTitle.textContent = i18next.t('posts');
+    fragmentStructure.querySelector('.card-body').appendChild(postsTitle);
 
     const postsList = document.createElement('ul');
     postsList.classList.add('list-group', 'border-0', 'rounded-0');
@@ -62,81 +62,79 @@ export default (initialState, elements, i18next) => {
     const postsListItems = posts.map((post) => {
       const element = document.createElement('li');
       element.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-      const link = document.createElement('a')
-      link.setAttribute('href', post.link)
-      const className = ui.viewPosts.has(post.id) ? ['fw-normal', 'link-secondary'] : ['fw-bold']
-      link.classList.add(...className)
-      link.dataset.id = post.id
-      link.textContent = post.title
-      link.setAttribute('target', '_blank')
-      link.setAttribute('rel', 'noopener noreferrer')
-      element.appendChild(link)
-      const button = document.createElement('button')
+      const link = document.createElement('a');
+      link.setAttribute('href', post.link);
+      const className = ui.viewPosts.has(post.id) ? ['fw-normal', 'link-secondary'] : ['fw-bold'];
+      link.classList.add(...className);
+      link.dataset.id = post.id;
+      link.textContent = post.title;
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+      element.appendChild(link);
+      const button = document.createElement('button');
       button.setAttribute('type', 'button');
-      button.classList.add('btn', 'btn-outline-primary', 'btn-sm')
-      button.dataset.id = post.id
-      button.dataset.bsToggle = 'modal'
-      button.dataset.bsTarget = '#modal'
-      button.textContent = i18next.t('view')
-      element.appendChild(button)
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+      button.dataset.id = post.id;
+      button.dataset.bsToggle = 'modal';
+      button.dataset.bsTarget = '#modal';
+      button.textContent = i18next.t('view');
+      element.appendChild(button);
       return element;
-    })
+    });
 
-    postsList.append(...postsListItems)
-    fragmentStructure.appendChild(postsList)
-    postDiv.innerHTML = ''
-    postDiv.appendChild(fragmentStructure)
-  }
-
+    postsList.append(...postsListItems);
+    fragmentStructure.appendChild(postsList);
+    postDiv.innerHTML = '';
+    postDiv.appendChild(fragmentStructure);
+  };
 
   const handleFeeds = (state) => {
     const { feeds } = state;
-    const {feedDiv} = elements;
+    const { feedDiv } = elements;
 
-    const newFeedDiv = document.createElement('div')
+    const newFeedDiv = document.createElement('div');
     newFeedDiv.classList.add('card', 'border-0');
 
-    const titleDiv = document.createElement('div')
+    const titleDiv = document.createElement('div');
     titleDiv.classList.add('card-body');
 
-    const h2Element = document.createElement('h2')
+    const h2Element = document.createElement('h2');
     h2Element.classList.add('card-title', 'h4');
-    h2Element.textContent = 'Фиды'
-    titleDiv.append(h2Element)
-    newFeedDiv.append(titleDiv)
+    h2Element.textContent = 'Фиды';
+    titleDiv.append(h2Element);
+    newFeedDiv.append(titleDiv);
 
-    const feedsList = document.createElement('ul')
-    feedsList.classList.add('list-group', 'border-0', 'rounded-0')
+    const feedsList = document.createElement('ul');
+    feedsList.classList.add('list-group', 'border-0', 'rounded-0');
 
     feeds.forEach((item) => {
-      const feed = document.createElement('li')
-      feed.classList.add('list-group-item', 'border-0', 'border-end-0')
+      const feed = document.createElement('li');
+      feed.classList.add('list-group-item', 'border-0', 'border-end-0');
 
-      const itemTitle = document.createElement('h3')
-      itemTitle.classList.add('h6', 'm-0')
-      itemTitle.textContent = item.title
+      const itemTitle = document.createElement('h3');
+      itemTitle.classList.add('h6', 'm-0');
+      itemTitle.textContent = item.title;
 
-      const itemDesription = document.createElement('p')
-      itemDesription.classList.add('m-0', 'small', 'text-black-50')
-      itemDesription.textContent = item.description
-      feed.append(itemTitle, itemDesription)
-      feedsList.prepend(feed)
+      const itemDesription = document.createElement('p');
+      itemDesription.classList.add('m-0', 'small', 'text-black-50');
+      itemDesription.textContent = item.description;
+      feed.append(itemTitle, itemDesription);
+      feedsList.prepend(feed);
     });
     newFeedDiv.append(feedsList);
-    feedDiv.replaceChildren(newFeedDiv)
-
+    feedDiv.replaceChildren(newFeedDiv);
   };
 
   const handleModal = (state) => {
-    const post = state.posts.find(({id}) => id === state.modal.postId)
-    const title = elements.modal.querySelector('.modal-title')
-    const body = elements.modal.querySelector('.modal-body')
-    const arcticle = elements.modal.querySelector('.full-article')
+    const post = state.posts.find(({ id }) => id === state.modal.postId);
+    const title = elements.modal.querySelector('.modal-title');
+    const body = elements.modal.querySelector('.modal-body');
+    const arcticle = elements.modal.querySelector('.full-article');
 
-    title.textContent = post.title
-    body.textContent = post.description
-    arcticle.href = post.link
-  }
+    title.textContent = post.title;
+    body.textContent = post.description;
+    arcticle.href = post.link;
+  };
 
   const watchedState = onChange(initialState, (path) => {
     switch (path) {
@@ -153,11 +151,11 @@ export default (initialState, elements, i18next) => {
         handlePosts(initialState);
         break;
       case ('modal.postId'):
-        handleModal(initialState)
-        break
+        handleModal(initialState);
+        break;
       case ('ui.viewPosts'):
-        handlePosts(initialState)
-        break
+        handlePosts(initialState);
+        break;
       default:
         break;
     }

@@ -2,11 +2,11 @@ import i18next from 'i18next';
 import 'bootstrap';
 import * as yup from 'yup';
 import axios from 'axios';
+import _ from 'lodash';
 import resources from './locales/index.js';
 import locale from './locale.js';
 import render from './watchers.js';
 import parse from './parse.js';
-import _ from 'lodash';
 
 const newProxy = (url) => {
   const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app');
@@ -18,11 +18,18 @@ const newProxy = (url) => {
 const validateUrl = (url, feeds) => {
   const feedsUrl = feeds.map((feed) => feed.url);
   const schema = yup.string().required().url().notOneOf(feedsUrl);
-
   return schema.validate(url).then(() => null).catch((error) => error.message);
 };
 
-
+const handleLoadingProcessError = (e) => {
+  if (e.isParsingError) {
+    return 'noRSS';
+  }
+  if (e.isAxiosError) {
+    return 'network';
+  }
+  return 'unknown';
+};
 
 const procRss = (watchedState, url) => {
   watchedState.loadingProcess.status = 'loading';
@@ -45,44 +52,37 @@ const procRss = (watchedState, url) => {
         error: null,
       };
     })
-   .catch((e) => {
+    .catch((e) => {
       console.log(e);
-
-      if (e.isParsingError) {
-        watchedState.loadingProcess.error = 'noRSS';
-      }
-      if (e.isAxiosError) {
-        watchedState.loadingProcess.error = 'network';
-      }
-      watchedState.loadingProcess.error = 'unknown';
+      watchedState.loadingProcess.error = handleLoadingProcessError(e);
       watchedState.loadingProcess.status = 'failed';
     });
 };
 
-const time = 5000
+const time = 5000;
 
 const loadNewPosts = (watchedState) => {
   const promise = watchedState.feeds.map((feed) => {
-    const urlInProxy = newProxy(feed.url)
+    const urlInProxy = newProxy(feed.url);
     return axios.get(urlInProxy).then((res) => {
-      const feedData = parse(res.data.contents)
-      const newPosts = feedData.items.map((item) => ({...item, channelId: feed.id}))
-      const oldPosts = watchedState.posts.filter((post) => post.channelId === feed.id)
+      const feedData = parse(res.data.contents);
+      const newPosts = feedData.items.map((item) => ({ ...item, channelId: feed.id }));
+      const oldPosts = watchedState.posts.filter((post) => post.channelId === feed.id);
 
       const posts = _.differenceWith(newPosts, oldPosts, (p1, p2) => p1.title === p2.title)
-        .map((post) => ({...post, id: _.uniqueId()}))
+        .map((post) => ({ ...post, id: _.uniqueId() }));
       // console.log(posts)
       if (posts.length > 0) {
-          watchedState.posts.unshift(...posts);
-        }
+        watchedState.posts.unshift(...posts);
+      }
     })
-    .catch((e) => {console.error(e)})
-  })
+      .catch((e) => { console.error(e); });
+  });
 
   Promise.all(promise).finally(() => {
-    setTimeout(() => loadNewPosts(watchedState), time)
-  })
-}
+    setTimeout(() => loadNewPosts(watchedState), time);
+  });
+};
 
 export default () => {
   const elements = {
@@ -106,10 +106,10 @@ export default () => {
       error: null,
     },
     modal: {
-      postId: null
+      postId: null,
     },
     ui: {
-      viewPosts: new Set()
+      viewPosts: new Set(),
     },
     feeds: [],
     posts: [],
@@ -133,7 +133,6 @@ export default () => {
 
         validateUrl(url, watchedState.feeds).then((error) => {
           if (!error) {
-            
             watchedState.form = {
               ...watchedState.form,
               valid: true,
@@ -154,8 +153,7 @@ export default () => {
         });
       });
 
-
-       elements.postDiv.addEventListener('click', (e) => {
+      elements.postDiv.addEventListener('click', (e) => {
         if (!('id' in e.target.dataset)) {
           return;
         }
